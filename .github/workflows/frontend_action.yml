@@ -1,0 +1,57 @@
+name: RTC Frontend Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Which branch to deploy'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - development
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, rtc-frontend]
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      # 1. Checkout code from selected branch
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      # 2. Sync project folder
+      - name: Sync project folder
+        run: |
+          RUNNER_WORK_DIR="${{ github.workspace }}"
+          PROJECT_DIR="/home/rtc-admin/RTC-Project-Frontend"
+          rsync -av --exclude='.git' "$RUNNER_WORK_DIR/" "$PROJECT_DIR/"
+          echo "Project folder synced from runner checkout."
+        working-directory: ${{ github.workspace }}
+
+      # 3. Stop existing containers
+      - name: Stop existing containers
+        run: |
+          cd /home/rtc-admin/RTC-Project-Frontend
+          docker compose down || echo "No containers to stop"
+
+      # 4. Build & start containers
+      - name: Build & run containers
+        run: |
+          cd /home/rtc-admin/RTC-Project-Frontend
+          docker compose up -d --build
+
+    

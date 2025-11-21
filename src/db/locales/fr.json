@@ -1,0 +1,13 @@
+{
+  "welcome": "Bienvenue",
+  "hello": "Bonjour",
+  "language": "Langue",
+  "change_language": "Changer de langue",
+  "login": "Connexion",
+  "logout": "Déconnexion",
+  "home": "Accueil",
+  "email_address": "Adresse e-mail",
+  "password": "Mot de passe",
+  "enter_email": "Entrez votre e-mail",
+  "enter_password": "Entrez votre mot de passe"
+}

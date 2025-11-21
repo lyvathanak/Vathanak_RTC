@@ -1,0 +1,30 @@
+[
+  {
+    "role": "admin",
+    "email": "admin@rtc.edu.kh",
+    "password": "password123",
+    "name": "Admin User",
+    "profile": { "department": "Administration" }
+  },
+  {
+    "role": "head_of_department",
+    "email": "hod@rtc.edu.kh",
+    "password": "password123",
+    "name": "Head of Department",
+    "profile": { "department": "Health Sciences", "title": "Department Head" }
+  },
+  {
+    "role": "teacher",
+    "email": "teacher@rtc.edu.kh",
+    "password": "password123",
+    "name": "Teacher User",
+    "profile": { "department": "Health Sciences", "subject": "Nursing" }
+  },
+  {
+    "role": "student",
+    "email": "student@rtc.edu.kh",
+    "password": "password123",
+    "name": "Student User",
+    "profile": { "studentId": "S2024001", "year": 2, "major": "Nursing" }
+  }
+]

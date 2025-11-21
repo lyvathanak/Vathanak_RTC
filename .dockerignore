@@ -1,0 +1,16 @@
+# dependencies & build output (rebuilt in container)
+node_modules
+dist
+
+# VCS & misc
+.git
+.gitignore
+
+# local env and editor stuff
+*.log
+.env*
+.vscode
+.idea
+
+# Don’t ignore nginx config; we need it in the image
+# nginx/nginx.conf

@@ -1,0 +1,14 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rtc-battambang-nginx
+    expose:
+      - "80"
+    restart: always
+    networks:
+      - rtc_net
+networks:
+  rtc_net:
+    external: true
