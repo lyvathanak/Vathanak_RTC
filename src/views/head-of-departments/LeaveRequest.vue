@@ -1,96 +1,121 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-8">
-    <div class="max-w-7xl mx-auto">
-      <div class="mb-8 border-b border-gray-200 pb-4 flex justify-between items-end">
+    
+    <div class="bg-[#235AA6] text-white p-4 flex items-center justify-between shadow-lg -mx-8 -mt-8 mb-8">
+      <div class="flex items-center"><h1 class="text-xl font-medium">Head of Department</h1></div>
+      <div class="flex items-center space-x-4"><button class="relative"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.007 2.007 0 0118 14.285V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.285c0 .531-.192 1.053-.595 1.405L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg><span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500"></span></button><select class="bg-[#1e4a8b] border border-blue-700 rounded-md py-1 px-2 text-sm"><option>🇺🇸 EN</option><option>🇰🇭 KH</option></select><div class="flex items-center space-x-2"><img src="https://via.placeholder.com/30" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white"><span class="text-white font-medium">John Doe</span></div></div>
+    </div>
+
+    <div class="w-full">
+      <div class="mb-6 pb-2 flex justify-between items-end">
         <div>
-          <h1 :class="['text-4xl font-extrabold tracking-tight text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
-            {{ t('leave_requests_approval') || 'Leave Requests Approval' }}
+          <h1 :class="['text-3xl font-medium tracking-tight text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
+            {{ t('leave_requests_approval') || 'Leave Request' }}
           </h1>
           <p class="text-lg text-gray-600 mt-1">
-            Review and take action on pending absence requests from staff and student guardians.
+            Centralized tool for managing staff and student absence requests.
           </p>
         </div>
+        <button 
+          class="px-5 py-2.5 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors flex items-center gap-2 font-medium"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Add Leave Request
+        </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-2xl shadow-xl p-6 transition-transform hover:scale-[1.02] border-l-4 border-orange-500 flex justify-between items-center">
-          <div><p class="text-sm font-semibold text-orange-600 uppercase">Pending Approvals</p><p class="text-4xl font-bold text-gray-800 mt-1">5</p></div>
-          <div class="p-3 bg-orange-100 rounded-full"><svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex justify-between items-center border border-gray-100 border-l-4 border-orange-500">
+          <div><p class="text-sm font-medium text-gray-500">Pending</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ leaveRequestKPIs.pending }}</p></div>
         </div>
-        <div class="bg-white rounded-2xl shadow-xl p-6 transition-transform hover:scale-[1.02] border-l-4 border-green-600 flex justify-between items-center">
-          <div><p class="text-sm font-semibold text-green-600 uppercase">Approved This Week</p><p class="text-4xl font-bold text-gray-800 mt-1">12</p></div>
-          <div class="p-3 bg-green-100 rounded-full"><svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+        <div class="bg-white rounded-xl shadow-lg p-6 flex justify-between items-center border border-gray-100 border-l-4 border-green-600">
+          <div><p class="text-sm font-medium text-gray-500">Approved</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ leaveRequestKPIs.approvedThisWeek }}</p></div>
         </div>
-        <div class="bg-white rounded-2xl shadow-xl p-6 transition-transform hover:scale-[1.02] border-l-4 border-red-600 flex justify-between items-center">
-          <div><p class="text-sm font-semibold text-red-600 uppercase">Rejected This Week</p><p class="text-4xl font-bold text-gray-800 mt-1">3</p></div>
-          <div class="p-3 bg-red-100 rounded-full"><svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
-          </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 flex justify-between items-center border border-gray-100 border-l-4 border-red-600">
+          <div><p class="text-sm font-medium text-gray-500">Rejected</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ leaveRequestKPIs.rejectedThisWeek }}</p></div>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg p-6 flex justify-between items-center border border-gray-100 border-l-4 border-blue-600">
+          <div><p class="text-sm font-medium text-gray-500">Total Request</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ leaveRequestKPIs.total }}</p></div>
+        </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-xl p-4 mb-6 flex justify-between items-center border border-gray-100">
-        <div class="flex items-center space-x-4">
+      <div class="bg-white rounded-lg shadow-md p-4 mb-6 border border-gray-200">
+        <div class="flex items-center space-x-4 mb-4">
             <input 
                 type="text" 
                 placeholder="Search by Requester Name or ID..." 
                 class="border border-gray-300 rounded-lg p-2.5 w-80 focus:ring-blue-500 focus:border-blue-500"
             >
-            <select class="border border-gray-300 rounded-lg p-2.5">
-                <option value="">Filter by Role</option>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
+            <button class="px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-medium">Search</button>
+        </div>
+
+        <div class="grid grid-cols-5 gap-3 mt-4">
+            <select class="border border-gray-300 rounded-lg p-2.5 text-sm text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Status</option>
             </select>
-            <select class="border border-gray-300 rounded-lg p-2.5">
-                <option value="pending">Filter by Status (Pending)</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+            <select class="border border-gray-300 rounded-lg p-2.5 text-sm text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Leave Type</option>
+            </select>
+            <select class="border border-gray-300 rounded-lg p-2.5 text-sm text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Requester Role</option>
+            </select>
+            <select class="border border-gray-300 rounded-lg p-2.5 text-sm text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Academic Year</option>
+            </select>
+            <select class="border border-gray-300 rounded-lg p-2.5 text-sm text-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Homeroom / Section</option>
             </select>
         </div>
-        <button class="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-colors shadow-sm">
-            View History
-        </button>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div class="p-6">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Requests Needing Review (5)</h2>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+        <div class="p-4">
+          <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-100">
+                  <tr>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-10">
+                          <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm">
+                      </th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Requester</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Leave Type</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Start Date</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">End Date</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Day</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Submit Date</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                      <th scope="col" class="px-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                  </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                  <tr v-for="request in pendingRequests" :key="request.id" class="hover:bg-gray-50 transition duration-150">
+                      <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <input type="checkbox" class="rounded border-gray-300 text-blue-600 shadow-sm">
+                      </td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ request.requester }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ request.type }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ request.startDate }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ request.endDate }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ request.totalDays }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-700">{{ request.submitDate }}</td>
+                      <td class="px-3 py-4 whitespace-nowrap">
+                          <span :class="`text-xs font-medium px-2.5 py-0.5 rounded-full ${request.statusStyle}`">{{ request.status }}</span>
+                      </td>
+                      <td class="px-3 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                          <button class="text-blue-600 hover:text-blue-800">View</button>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
           
-          <div class="min-h-[400px] bg-white rounded-lg p-0">
-              <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-100">
-                      <tr>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider rounded-tl-lg">ID</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Requester</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Homeroom / Section</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Date</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider rounded-tr-lg">Action</th>
-                      </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                      <tr class="hover:bg-orange-50 transition duration-150 border-l-4 border-orange-400">
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">101</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Teacher A</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Teacher</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">G3-A</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">2025-12-01</td>
-                          <td class="px-6 py-4 whitespace-nowrap"><span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Pending</span></td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><button class="text-blue-600 hover:text-blue-800 font-bold">Review & Approve</button></td>
-                      </tr>
-                      <tr class="hover:bg-orange-50 transition duration-150 border-l-4 border-orange-400">
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">102</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Student X (Guardian)</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">Student</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">G4-B</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">2025-12-05</td>
-                          <td class="px-6 py-4 whitespace-nowrap"><span class="bg-orange-100 text-orange-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Pending</span></td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><button class="text-blue-600 hover:text-blue-800 font-bold">Review & Approve</button></td>
-                      </tr>
-                  </tbody>
-              </table>
-              <div class="py-4 text-center text-gray-500 text-sm border-t">... 3 more pending records ...</div>
+          <div class="p-4 border-t flex justify-between items-center text-sm text-gray-600">
+              <span>Showing 1 to 10 of {{ leaveRequestKPIs.total }} entries</span>
+              <div class="flex space-x-1">
+                  <button class="px-3 py-1 border rounded-lg hover:bg-gray-100">Previous</button>
+                  <button class="px-3 py-1 border rounded-lg bg-blue-600 text-white">1</button>
+                  <button class="px-3 py-1 border rounded-lg hover:bg-gray-100">2</button>
+                  <button class="px-3 py-1 border rounded-lg hover:bg-gray-100">Next</button>
+              </div>
           </div>
-          
         </div>
       </div>
     </div>
@@ -98,10 +123,39 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-// Mocked imports for display purposes
-const { t, locale } = useI18n({ messages: { en: { leave_requests_approval: 'Leave Requests Approval' } } }); 
+
+const { t, locale } = useI18n({ messages: { en: { leave_requests_approval: 'Leave Request' } } }); 
 const router = useRouter();
 const route = useRoute();
+
+const leaveRequestKPIs = ref({
+    pending: 0,
+    approvedThisWeek: 0,
+    rejectedThisWeek: 0,
+    total: 0,
+});
+const pendingRequests = ref([]);
+
+const fetchData = () => {
+    // Simulated data fetching
+    setTimeout(() => {
+        leaveRequestKPIs.value = {
+            pending: 5,
+            approvedThisWeek: 12,
+            rejectedThisWeek: 3,
+            total: 20,
+        };
+        
+        pendingRequests.value = [
+            { id: 101, requester: 'Teacher A', role: 'Teacher', homeroom: 'G3-A', status: 'Pending', type: 'Sick Leave', startDate: '01/12/2025', endDate: '01/12/2025', totalDays: 1, submitDate: '30/11/2025', statusStyle: 'bg-orange-100 text-orange-800' },
+            { id: 102, requester: 'Student X (Guardian)', role: 'Student', homeroom: 'G4-B', status: 'Pending', type: 'Family Event', startDate: '05/12/2025', endDate: '06/12/2025', totalDays: 2, submitDate: '01/12/2025', statusStyle: 'bg-orange-100 text-orange-800' },
+            { id: 103, requester: 'Teacher B', role: 'Teacher', homeroom: 'G6-B', status: 'Approved', type: 'Mission', startDate: '10/12/2025', endDate: '12/12/2025', totalDays: 3, submitDate: '05/12/2025', statusStyle: 'bg-green-100 text-green-800' },
+        ];
+    }, 500); 
+};
+
+onMounted(fetchData);
 </script>
