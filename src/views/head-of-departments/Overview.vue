@@ -1,85 +1,202 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-8">
+  <div class="min-h-screen bg-gray-50 py-6"> 
     
-    <div class="bg-[#235AA6] text-white p-4 flex items-center justify-between shadow-lg -mx-8 -mt-8 mb-8">
-      <div class="flex items-center">
-        <h1 class="text-xl font-medium">Head of Department</h1>
-      </div>
-      <div class="flex items-center space-x-4">
-        <button class="relative">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.007 2.007 0 0118 14.285V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.285c0 .531-.192 1.053-.595 1.405L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-          <span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500"></span>
-        </button>
-        <select class="bg-[#1e4a8b] border border-blue-700 rounded-md py-1 px-2 text-sm">
-          <option>🇺🇸 EN</option>
-          <option>🇰🇭 KH</option>
-        </select>
-        <div class="flex items-center space-x-2">
-          <img src="https://via.placeholder.com/30" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white">
-          <span class="text-white font-medium">{{ authStore.user?.name || 'John Doe' }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="w-full">
-      <div class="mb-6 pb-2 flex justify-between items-end">
+    <div class="px-6"> 
+      
+      <div class="mb-8 flex justify-between items-center">
         <div>
-          <h1 :class="['text-3xl font-medium tracking-tight text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
-            {{ t('dashboard') || 'Dashboard' }}
+          <h1 :class="['text-3xl font-bold text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
+            {{ t('hod_dashboard') }}
           </h1>
-          <p class="text-lg text-gray-600 mt-1">
-            A quick overview of key metrics and statistics across the department.
+          <p :class="['text-gray-600 mt-2', locale === 'kh' ? 'khmer-text' : '']">
+            {{ t('welcome') }}, {{ authStore.user?.name }}!
           </p>
         </div>
+        
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 flex justify-between items-center border border-gray-100">
-          <div><p class="text-sm font-medium text-gray-500">Teachers</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ dashboardData.teachers }}</p></div>
-          <span class="flex items-center text-green-600 text-sm font-medium bg-green-100 px-3 py-1 rounded-full">+11.01%</span>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 flex justify-between items-center border border-gray-100">
-          <div><p class="text-sm font-medium text-gray-500">Students</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ dashboardData.students }}</p></div>
-          <span class="flex items-center text-red-600 text-sm font-medium bg-red-100 px-3 py-1 rounded-full">-2.01%</span>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 flex justify-between items-center border border-gray-100">
-          <div><p class="text-sm font-medium text-gray-500">Attendance</p><p class="text-3xl font-semibold text-gray-800 mt-1">{{ dashboardData.attendance }}%</p></div>
-          <span class="flex items-center text-green-600 text-sm font-medium bg-green-100 px-3 py-1 rounded-full">+11.01%</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-          <h2 class="text-lg font-medium text-gray-800 mb-4 border-b pb-2">Genders</h2>
-          <div class="flex items-center justify-center h-64 relative">
-            <canvas ref="gendersChartCanvas"></canvas>
-            <div class="absolute text-center"><p class="text-4xl font-semibold text-gray-800">{{ dashboardData.genders.total }}</p><p class="text-sm text-gray-500">Total</p></div>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 :class="['text-xl font-semibold mb-4', locale === 'kh' ? 'khmer-text' : '']">
+          Department Head Information
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="text-sm font-medium text-gray-500">Role:</label>
+            <p class="text-lg font-semibold text-purple-600 capitalize">{{ authStore.userRole.replace('_', ' ') }}</p>
           </div>
-          <div class="flex justify-center space-x-6 mt-4 text-sm text-gray-600">
-            <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-blue-500"></span>Male - {{ dashboardData.genders.male }}%</span>
-            <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-pink-500"></span>Female - {{ dashboardData.genders.female }}%</span>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Email:</label>
+            <p class="text-lg">{{ authStore.user?.email }}</p>
           </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-          <h2 class="text-lg font-medium text-gray-800 mb-4 border-b pb-2">Results</h2>
-          <div class="flex items-center justify-center h-64 relative">
-            <canvas ref="resultsChartCanvas"></canvas>
-            <div class="absolute text-center"><p class="text-4xl font-semibold text-gray-800">{{ dashboardData.results.total }}</p><p class="text-sm text-gray-500">Total</p></div>
-          </div>
-          <div class="flex justify-center space-x-6 mt-4 text-sm text-gray-600">
-            <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-green-500"></span>Passed - {{ dashboardData.results.passed }}%</span>
-            <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-red-500"></span>Failed - {{ dashboardData.results.failed }}%</span>
+          <div>
+            <label class="text-sm font-medium text-gray-500">Department:</label>
+            <p class="text-lg">{{ authStore.user?.profile?.department }}</p>
           </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-        <h2 class="text-lg font-medium text-gray-800 mb-4 border-b pb-2">Student Performance (By Gender & Year)</h2>
-        <div class="h-96">
-          <canvas ref="performanceChartCanvas"></canvas>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Department Teachers</p>
+              <p class="text-3xl font-bold text-blue-600">12</p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-full">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+          </div>
         </div>
-        <div class="flex justify-center space-x-6 mt-4 text-sm text-gray-600">
-          <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-blue-500"></span>Male</span>
-          <span class="flex items-center"><span class="block w-3 h-3 rounded-full mr-2 bg-pink-500"></span>Female</span>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Department Courses</p>
+              <p class="text-3xl font-bold text-green-600">18</p>
+            </div>
+            <div class="p-3 bg-green-100 rounded-full">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Department Students</p>
+              <p class="text-3xl font-bold text-purple-600">285</p>
+            </div>
+            <div class="p-3 bg-purple-100 rounded-full">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Pending Requests</p>
+              <p class="text-3xl font-bold text-orange-600">7</p>
+            </div>
+            <div class="p-3 bg-orange-100 rounded-full">
+              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 :class="['text-xl font-semibold mb-4', locale === 'kh' ? 'khmer-text' : '']">
+          Department Management
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-blue-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Manage Teachers</h3>
+                <p class="text-sm text-gray-600">Assign and oversee department faculty</p>
+              </div>
+            </div>
+          </button>
+
+          <button class="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-green-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Course Approval</h3>
+                <p class="text-sm text-gray-600">Review and approve course proposals</p>
+              </div>
+            </div>
+          </button>
+
+          <button class="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-purple-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Department Reports</h3>
+                <p class="text-sm text-gray-600">View performance and analytics</p>
+              </div>
+            </div>
+          </button>
+
+          <button class="p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-indigo-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Schedule Classes</h3>
+                <p class="text-sm text-gray-600">Manage department timetables</p>
+              </div>
+            </div>
+          </button>
+
+          <button class="p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-yellow-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Budget Requests</h3>
+                <p class="text-sm text-gray-600">Submit and track department budgets</p>
+              </div>
+            </div>
+          </button>
+
+          <button class="p-4 bg-red-50 hover:bg-red-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-red-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Approve Requests</h3>
+                <p class="text-sm text-gray-600">Review pending department requests</p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 :class="['text-xl font-semibold mb-4', locale === 'kh' ? 'khmer-text' : '']">
+          Head of Department Permissions
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div 
+            v-for="permission in authStore.userPermissions" 
+            :key="permission"
+            class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium"
+          >
+            {{ permission.replace(/_/g, ' ').toUpperCase() }}
+          </div>
         </div>
       </div>
     </div>
@@ -87,108 +204,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import Chart from 'chart.js/auto';
+import { useAuthStore } from "@/stores/Authentication/authStore.js";
+import ChangeLanguage from "@/components/language/ChangLanguage.vue";
 
-const authStore = { user: { name: 'Dr. Jane Doe' } };
-const { t, locale } = useI18n({ messages: { en: { dashboard: 'Dashboard' } } });
+const router = useRouter();
+const route = useRoute();
+const { t, locale } = useI18n();
+const authStore = useAuthStore();
 
-const gendersChartCanvas = ref(null);
-const resultsChartCanvas = ref(null);
-const performanceChartCanvas = ref(null);
-
-const dashboardData = ref({
-  teachers: 0, students: 0, attendance: 0,
-  genders: { male: 0, female: 0, total: 0 },
-  results: { passed: 0, failed: 0, total: 0 },
-  performance: { maleScores: [], femaleScores: [], years: [] }
-});
-
-const fetchData = () => {
-    setTimeout(() => {
-        dashboardData.value = {
-            teachers: 65, students: 7265, attendance: 65,
-            genders: { male: 75, female: 25, total: 100 },
-            results: { passed: 80, failed: 20, total: 100 },
-            performance: { 
-                maleScores: [223, 174, 394, 295], femaleScores: [256, 169, 316, 350],
-                years: ['2021-2022', '2022-2023', '2023-2024', '2024-2025']
-            }
-        };
-        renderGendersChart();
-        renderResultsChart();
-        renderPerformanceChart();
-    }, 500); 
-};
-
-onMounted(fetchData);
-
-const renderGendersChart = () => {
-  const ctx = gendersChartCanvas.value.getContext('2d');
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Male', 'Female'],
-      datasets: [{
-        data: [dashboardData.value.genders.male, dashboardData.value.genders.female],
-        backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(236, 72, 153, 0.8)'],
-        borderColor: ['rgba(59, 130, 246, 1)', 'rgba(236, 72, 153, 1)'],
-        borderWidth: 1,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '70%',
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed}%` } } }
-    }
-  });
-};
-
-const renderResultsChart = () => {
-  const ctx = resultsChartCanvas.value.getContext('2d');
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Passed', 'Failed'],
-      datasets: [{
-        data: [dashboardData.value.results.passed, dashboardData.value.results.failed],
-        backgroundColor: ['rgba(52, 211, 153, 0.8)', 'rgba(239, 68, 68, 0.8)'],
-        borderColor: ['rgba(52, 211, 153, 1)', 'rgba(239, 68, 68, 1)'],
-        borderWidth: 1,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '70%',
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed}%` } } }
-    }
-  });
-};
-
-const renderPerformanceChart = () => {
-  const ctx = performanceChartCanvas.value.getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: dashboardData.value.performance.years,
-      datasets: [
-        {
-          label: 'Male', data: dashboardData.value.performance.maleScores,
-          backgroundColor: 'rgba(59, 130, 246, 0.8)', borderColor: 'rgba(59, 130, 246, 1)', borderWidth: 1, borderRadius: 5,
-        },
-        {
-          label: 'Female', data: dashboardData.value.performance.femaleScores,
-          backgroundColor: 'rgba(236, 72, 153, 0.8)', borderColor: 'rgba(236, 72, 153, 1)', borderWidth: 1, borderRadius: 5,
-        }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, title: { display: true, text: 'Years', font: { size: 14, weight: 'normal' }, color: '#4B5563' } },
-        y: { beginAtZero: true, grid: { color: 'rgba(229, 231, 235, 0.7)' }, title: { display: true, text: 'Scores', font: { size: 14, weight: 'normal' }, color: '#4B5563' } }
-      }
-    }
-  });
+const handleLogout = () => {
+  authStore.logout();
+  const currentLang = route.params.lang || 'en';
+  router.push(`/${currentLang}/login`);
 };
 </script>

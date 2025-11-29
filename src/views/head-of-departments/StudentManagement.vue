@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-8">
+  <div class="min-h-screen bg-gray-50">
     
-    <div class="bg-[#235AA6] text-white p-4 flex items-center justify-between shadow-lg -mx-8 -mt-8 mb-8">
+    <div class="bg-[#235AA6] text-white p-4 flex items-center justify-between shadow-lg mb-8">
       <div class="flex items-center"><h1 class="text-xl font-medium">Head of Department</h1></div>
       <div class="flex items-center space-x-4"><button class="relative"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.007 2.007 0 0118 14.285V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.285c0 .531-.192 1.053-.595 1.405L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg><span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500"></span></button><select class="bg-[#1e4a8b] border border-blue-700 rounded-md py-1 px-2 text-sm"><option>🇺🇸 EN</option><option>🇰🇭 KH</option></select><div class="flex items-center space-x-2"><img src="https://via.placeholder.com/30" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white"><span class="text-white font-medium">John Doe</span></div></div>
     </div>
 
-    <div class="w-full">
+    <div class="w-full px-8 pb-8">
       <div class="mb-6 pb-2 flex justify-between items-end">
         <div>
           <h1 :class="['text-3xl font-medium tracking-tight text-gray-900', locale === 'kh' ? 'khmer-text' : '']">

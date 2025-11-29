@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-8">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen bg-gray-50">
+    <div class="w-full px-8 pb-8">
       <div class="mb-6 pb-2 flex justify-between items-end">
         <div>
           <h1 :class="['text-3xl font-medium tracking-tight text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
