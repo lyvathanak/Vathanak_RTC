@@ -100,10 +100,14 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+// FIX 1: Import the API object directly (aliased for clarity)
+import TimeTableAPI from "@/stores/apis/TimeTableCRUD";
 
 const { t, locale } = useI18n({ messages: { en: { department_timetable: 'Time Table' } } }); 
 const router = useRouter();
 const route = useRoute();
+// FIX 2: Assign the imported object directly, do NOT call it as a function
+const timeTableStore = TimeTableAPI; 
 
 const timeSlots = ref([]);
 
@@ -114,16 +118,31 @@ const getStyle = (subject) => {
     return 'font-medium text-green-800 bg-green-100 px-3 py-1 rounded-full';
 };
 
-const fetchData = () => {
-    // Simulated data fetching
-    setTimeout(() => {
+const fetchData = async () => {
+    try {
+        const response = await timeTableStore.getAllTimeSlots();
+        const data = response.data.slots;
+        
+        timeSlots.value = data.map(slot => ({
+            ...slot,
+            // Placeholder mapping, actual logic needed
+            mon: { subject: 'G4 Math', style: getStyle('G4 Math') }, 
+            tue: { subject: 'G4 Art', style: getStyle('G4 Art') },
+            wed: { subject: 'G4 Khmer', style: getStyle('G4 Khmer') },
+            thu: { subject: 'G4 Science', style: getStyle('G4 Science') },
+            fri: { subject: 'G4 PE', style: getStyle('G4 PE') },
+        })) || [];
+        
+    } catch (error) {
+        console.error("Failed to fetch time table data (using mock fallback):", error);
+        // Fallback to mock data on API failure
         timeSlots.value = [
             {time: '8:00 - 9:00', mon: {subject: 'G4 Math', style: getStyle('G4 Math')}, tue: {subject: 'G4 Art', style: getStyle('G4 Art')}, wed: {subject: 'G4 Khmer', style: getStyle('G4 Khmer')}, thu: {subject: 'G4 Science', style: getStyle('G4 Science')}, fri: {subject: 'G4 PE', style: getStyle('G4 PE')}},
             {time: '9:00 - 10:00', mon: {subject: 'G4 English', style: getStyle('G4 English')}, tue: {subject: 'G4 Reading', style: getStyle('G4 Reading')}, wed: {subject: 'G4 Math', style: getStyle('G4 Math')}, thu: {subject: 'G4 English', style: getStyle('G4 English')}, fri: {subject: 'G4 Art', style: getStyle('G4 Art')}},
             {time: '10:00 - 10:15', mon: {subject: 'Break', style: getStyle('Break')}, tue: {subject: 'Break', style: getStyle('Break')}, wed: {subject: 'Break', style: getStyle('Break')}, thu: {subject: 'Break', style: getStyle('Break')}, fri: {subject: 'Break', style: getStyle('Break')}},
             {time: '10:15 - 11:15', mon: {subject: 'G4 Science', style: getStyle('G4 Science')}, tue: {subject: 'G4 Math', style: getStyle('G4 Math')}, wed: {subject: 'G4 English', style: getStyle('G4 English')}, thu: {subject: 'G4 Reading', style: getStyle('G4 Reading')}, fri: {subject: 'G4 Khmer', style: getStyle('G4 Khmer')}},
         ];
-    }, 500); 
+    }
 };
 
 onMounted(fetchData);

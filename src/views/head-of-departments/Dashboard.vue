@@ -7,15 +7,11 @@ export const containerClass = "w-full h-full";
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import HODSidebar from "@/components/head-of-departments/HODSidebar.vue";
-// Removed Header and Footer imports as they are page-specific
-// import Header from "@/components/features/Header.vue";
-// import Footer from "@/components/features/Footer.vue";
 import HeaderControl from "@/components/features/HeaderControl.vue";
 
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 // Responsive sidebar state

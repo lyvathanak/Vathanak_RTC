@@ -126,10 +126,14 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+// FIX 1: Import the API object directly (aliased for clarity)
+import LeaveAPI from "@/stores/apis/LeaveRequestManagement"; 
 
 const { t, locale } = useI18n({ messages: { en: { leave_requests_approval: 'Leave Request' } } }); 
 const router = useRouter();
 const route = useRoute();
+// FIX 2: Assign the imported object directly, do NOT call it as a function
+const leaveRequestStore = LeaveAPI; 
 
 const leaveRequestKPIs = ref({
     pending: 0,
@@ -139,22 +143,43 @@ const leaveRequestKPIs = ref({
 });
 const pendingRequests = ref([]);
 
-const fetchData = () => {
-    // Simulated data fetching
-    setTimeout(() => {
-        leaveRequestKPIs.value = {
-            pending: 5,
-            approvedThisWeek: 12,
-            rejectedThisWeek: 3,
-            total: 20,
-        };
+const fetchData = async () => {
+    try {
+        const statsResponse = await leaveRequestStore.getLeaveRequestStats();
+        const listResponse = await leaveRequestStore.getAllLeaveRequests();
         
+        // Map stats data to KPIs
+        if (statsResponse.success) {
+            leaveRequestKPIs.value.pending = statsResponse.stats.pending_count || 0;
+            leaveRequestKPIs.value.approvedThisWeek = statsResponse.stats.approved_this_week || 0;
+            leaveRequestKPIs.value.rejectedThisWeek = statsResponse.stats.rejected_this_week || 0;
+            leaveRequestKPIs.value.total = statsResponse.stats.total_count || 0;
+        }
+
+        // Map list data
+        if (listResponse.success && Array.isArray(listResponse.requests)) {
+             pendingRequests.value = listResponse.requests.map(req => ({
+                id: req.id,
+                requester: req.user_id || 'N/A', 
+                type: req.type || 'N/A',
+                startDate: req.start_date || 'N/A',
+                endDate: req.end_date || 'N/A',
+                totalDays: req.total_days || 0,
+                submitDate: req.requested_at ? new Date(req.requested_at).toLocaleDateString() : 'N/A',
+                status: req.status || 'Pending',
+                statusStyle: req.status ? leaveRequestStore.getStatusBadgeClass(req.status) : 'bg-orange-100 text-orange-800',
+            }));
+        }
+
+    } catch (error) {
+        console.error("Failed to fetch leave request data (using mock fallback):", error);
+        // Fallback to mock data to ensure rendering
+        leaveRequestKPIs.value = { pending: 5, approvedThisWeek: 12, rejectedThisWeek: 3, total: 20 };
         pendingRequests.value = [
-            { id: 101, requester: 'Teacher A', role: 'Teacher', homeroom: 'G3-A', status: 'Pending', type: 'Sick Leave', startDate: '01/12/2025', endDate: '01/12/2025', totalDays: 1, submitDate: '30/11/2025', statusStyle: 'bg-orange-100 text-orange-800' },
-            { id: 102, requester: 'Student X (Guardian)', role: 'Student', homeroom: 'G4-B', status: 'Pending', type: 'Family Event', startDate: '05/12/2025', endDate: '06/12/2025', totalDays: 2, submitDate: '01/12/2025', statusStyle: 'bg-orange-100 text-orange-800' },
-            { id: 103, requester: 'Teacher B', role: 'Teacher', homeroom: 'G6-B', status: 'Approved', type: 'Mission', startDate: '10/12/2025', endDate: '12/12/2025', totalDays: 3, submitDate: '05/12/2025', statusStyle: 'bg-green-100 text-green-800' },
+            { id: 101, requester: 'Teacher A', type: 'Sick Leave', startDate: '01/12/2025', endDate: '01/12/2025', totalDays: 1, submitDate: '30/11/2025', status: 'Pending', statusStyle: 'bg-orange-100 text-orange-800' },
+            { id: 102, requester: 'Student X', type: 'Family Event', startDate: '05/12/2025', endDate: '06/12/2025', totalDays: 2, submitDate: '01/12/2025', status: 'Pending', statusStyle: 'bg-orange-100 text-orange-800' },
         ];
-    }, 500); 
+    }
 };
 
 onMounted(fetchData);

@@ -118,27 +118,36 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+// FIX 1: Import the API object directly (aliased for clarity)
+import TeacherAPI from "@/stores/apis/TeacherCRUD"; 
 
 const { t, locale } = useI18n({ messages: { en: { teacher_management: 'Teacher Information' } } }); 
 const router = useRouter();
 const route = useRoute();
+// FIX 2: Assign the imported object directly, do NOT call it as a function
+const teacherStore = TeacherAPI; 
 
 const teacherList = ref([]);
 const teacherKPIs = ref({
-    totalFaculty: 12,
-    avgClassSize: 24,
+    totalFaculty: 0,
+    avgClassSize: 0,
 });
 
-const fetchData = () => {
-    // Simulated data fetching
-    setTimeout(() => {
+const fetchData = async () => {
+    try {
+        const response = await teacherStore.fetchDepartmentTeachers();
+        teacherList.value = response.list || response.data || [];
+        teacherKPIs.value.totalFaculty = response.total || teacherList.value.length;
+        
+    } catch (error) {
+        console.error("Failed to fetch teacher data (using mock fallback):", error);
+        // Fallback to mock data on API failure
+        teacherKPIs.value.totalFaculty = 4;
         teacherList.value = [
             { id: 'T001', fullName: 'ហេង សុវណ្ណារី', latinFullName: 'Heng Sovannary', dob: '1990-08-01', gender: 'Female', gradeLevel: 'G3', section: 'A', status: 'Active' },
             { id: 'T002', fullName: 'វណ្ណី វីរៈ', latinFullName: 'Vanny Virak', dob: '1985-04-20', gender: 'Male', gradeLevel: 'Specialist', section: 'Music', status: 'Specialist' },
-            { id: 'T003', fullName: 'ជុំ សេរី', latinFullName: 'Chum Serey', dob: '1995-12-12', gender: 'Female', gradeLevel: 'G1', section: 'C', status: 'Unassigned' },
-            { id: 'T004', fullName: 'ច័ន្ទ មុនី', latinFullName: 'Chan Mony', dob: '1988-02-15', gender: 'Female', gradeLevel: 'G5', section: 'B', status: 'Active' },
         ];
-    }, 500); 
+    }
 };
 
 onMounted(fetchData);

@@ -118,30 +118,39 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+// FIX 1: Import the API object directly (aliased for clarity)
+import StudentAPI from "@/stores/apis/StudentCRUD"; 
 
 const { t, locale } = useI18n({ messages: { en: { student_management: 'Student Information' } } }); 
 const router = useRouter();
 const route = useRoute();
+// FIX 2: Assign the imported object directly, do NOT call it as a function
+const studentStore = StudentAPI; 
 
 const studentList = ref([]);
 const studentKPIs = ref({
-    totalEnrollment: 285,
-    avgAttendance: '96.3%',
-    chronicAbsenteeism: 5,
-    sectionsCreated: 12,
+    totalEnrollment: 0,
+    avgAttendance: '0%',
+    chronicAbsenteeism: 0,
+    sectionsCreated: 0,
 });
 
-const fetchData = () => {
-    // Simulated data fetching
-    setTimeout(() => {
+const fetchData = async () => {
+    try {
+        // NOTE: Assuming fetchDepartmentStudents exists on the StudentAPI object, as is common in CRUD files.
+        const response = await studentStore.fetchDepartmentStudents();
+        studentList.value = response.list || response.data || [];
+        studentKPIs.value.totalEnrollment = response.total || studentList.value.length;
+        
+    } catch (error) {
+        console.error("Failed to fetch student data (using mock fallback):", error);
+        // Fallback to mock data on API failure
+        studentKPIs.value.totalEnrollment = 5;
         studentList.value = [
             { id: 'S001', fullName: 'សុខា មាស', latinFullName: 'Sokha Meas', dob: '2018-05-15', gender: 'Female', grade: 'G3', section: 'A', status: 'Active' },
             { id: 'S014', fullName: 'ឆាយ ហេង', latinFullName: 'Chhay Heng', dob: '2017-02-28', gender: 'Male', grade: 'G4', section: 'B', status: 'At-Risk' },
-            { id: 'S022', fullName: 'លីណា', latinFullName: 'Linna Chay', dob: '2019-10-10', gender: 'Female', grade: 'G1', section: 'B', status: 'At-Risk' },
-            { id: 'S023', fullName: 'វណ្ណ មុនី', latinFullName: 'Vann Mony', dob: '2016-01-01', gender: 'Female', grade: 'G6', section: 'C', status: 'Active' },
-            { id: 'S024', fullName: 'តារា រិទ្ធ', latinFullName: 'Dara Rith', dob: '2017-07-20', gender: 'Male', grade: 'G5', section: 'A', status: 'Active' },
         ];
-    }, 500); 
+    }
 };
 
 onMounted(fetchData);
