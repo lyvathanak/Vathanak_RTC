@@ -138,7 +138,7 @@ const studentKPIs = ref({
 const fetchData = async () => {
     try {
         // NOTE: Assuming fetchDepartmentStudents exists on the StudentAPI object, as is common in CRUD files.
-        const response = await studentStore.fetchDepartmentStudents();
+        const response = await studentStore.getAllStudents();
         studentList.value = response.list || response.data || [];
         studentKPIs.value.totalEnrollment = response.total || studentList.value.length;
         

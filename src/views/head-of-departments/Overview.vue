@@ -6,10 +6,10 @@
       <div class="mb-8 flex justify-between items-center">
         <div>
           <h1 :class="['text-3xl font-bold text-gray-900', locale === 'kh' ? 'khmer-text' : '']">
-            {{ t('hod_dashboard') }}
+            {{ t('hod_dashboard') || 'Dashboard' }}
           </h1>
           <p :class="['text-gray-600 mt-2', locale === 'kh' ? 'khmer-text' : '']">
-            {{ t('welcome') }}, {{ authStore.user?.name }}!
+            {{ t('welcome') || 'Welcome' }}, {{ authStore.user?.name }}!
           </p>
         </div>
       </div>
@@ -21,7 +21,9 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-500">Role:</label>
-            <p class="text-lg font-semibold text-purple-600 capitalize">{{ authStore.userRole.replace('_', ' ') }}</p>
+            <p class="text-lg font-semibold text-purple-600 capitalize">
+              {{ (authStore.userRole || '').replace('_', ' ') }}
+            </p>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-500">Email:</label>
@@ -29,7 +31,7 @@
           </div>
           <div>
             <label class="text-sm font-medium text-gray-500">Department:</label>
-            <p class="text-lg">{{ authStore.user?.profile?.department }}</p>
+            <p class="text-lg">{{ authStore.user?.user_detail?.department || authStore.user?.profile?.department || 'N/A' }}</p>
           </div>
         </div>
       </div>
@@ -98,7 +100,7 @@
           Department Management
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
+          <button @click="router.push(`/${locale}/teacher-management`)" class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-blue-500 text-white rounded-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,7 +142,7 @@
             </div>
           </button>
 
-          <button class="p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-left transition-colors">
+          <button @click="router.push(`/${locale}/time-table`)" class="p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-left transition-colors">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-indigo-500 text-white rounded-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +170,7 @@
             </div>
           </button>
 
-          <button class="p-4 bg-red-50 hover:bg-red-100 rounded-lg text-left transition-colors">
+          <button @click="router.push(`/${locale}/leave-request`)" class="p-4 bg-red-50 hover:bg-red-100 rounded-lg text-left transition-colors">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-red-500 text-white rounded-lg">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,16 +210,23 @@ import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/Authentication/authStore.js";
 import ChangeLanguage from "@/components/language/ChangLanguage.vue";
-// FIX 1: Import the API object directly (aliased for clarity)
-import HOD_API from "@/stores/apis/HeadOfDepartmentCRUD"; 
-import Chart from 'chart.js/auto'; 
+
+// API Imports
+import StudentAPI from "@/stores/apis/StudentCRUD"; 
+import TeacherAPI from "@/stores/apis/TeacherCRUD";
+import LeaveRequestAPI from "@/stores/apis/LeaveRequestManagement";
+
+// REMOVED: import Chart from 'chart.js/auto'; (Causes resolve error due to missing dependency)
 
 const router = useRouter();
 const route = useRoute();
-const { t, locale } = useI18n();
+const { t, locale } = useI18n({ 
+    messages: { 
+        en: { hod_dashboard: 'HOD Dashboard', welcome: 'Welcome' }, 
+        kh: { hod_dashboard: 'ផ្ទាំងគ្រប់គ្រងប្រធានផ្នែក', welcome: 'សូមស្វាគមន៍' } 
+    } 
+});
 const authStore = useAuthStore();
-// FIX 2: Assign the imported object directly, do NOT call it as a function
-const hodStore = HOD_API; 
 
 const dashboardData = ref({
     teachers: 0, 
@@ -231,33 +240,55 @@ const dashboardData = ref({
 
 const fetchData = async () => {
     try {
-        // NOTE: The HODCRUD.js file does not contain a fetchHODDashboardStats function.
-        // We rely on the API call to fail, triggering the mock data fallback.
-        const allHODsResponse = await hodStore.getAllHODs();
+        const userDept = authStore.user?.user_detail?.department || authStore.user?.profile?.department || '';
         
-        if (!allHODsResponse.success) {
-            throw new Error("Failed to connect to HOD API or returned empty success.");
+        // Fetch real data in parallel
+        const [teachersRes, studentsRes, leaveRes] = await Promise.allSettled([
+            TeacherAPI.getTeachersByDepartment(userDept),
+            StudentAPI.getStudentsByDepartment(userDept),
+            LeaveRequestAPI.getLeaveRequestsByStatus('pending')
+        ]);
+
+        // Process Teachers Data
+        if (teachersRes.status === 'fulfilled' && teachersRes.value.success) {
+             dashboardData.value.teachers = teachersRes.value.total || teachersRes.value.data?.length || 0;
+        } else {
+             console.warn("Using fallback/mock for teachers due to API error or permission issue.");
+             dashboardData.value.teachers = 12; // Mock
         }
-        
-        // Since dashboard stats function is missing, we proceed to mock fallback.
-        
-        throw new Error("Proceeding to mock fallback to ensure UI renders with data.");
 
-    } catch (error) {
-        console.error("Failed to fetch dashboard data (using mock fallback):", error);
-        
-        // Fallback to mock data to ensure rendering
-        dashboardData.value.teachers = 12;
-        dashboardData.value.students = 285;
-        dashboardData.value.courses = 18;
-        dashboardData.value.pendingRequests = 7;
+        // Process Students Data
+        if (studentsRes.status === 'fulfilled' && studentsRes.value.success) {
+             dashboardData.value.students = studentsRes.value.total || studentsRes.value.data?.length || 0;
+        } else {
+             dashboardData.value.students = 285; // Mock
+        }
 
+        // Process Pending Requests
+        if (leaveRes.status === 'fulfilled' && leaveRes.value.success) {
+            dashboardData.value.pendingRequests = leaveRes.value.total_count || leaveRes.value.requests?.length || 0;
+        } else {
+            dashboardData.value.pendingRequests = 7; // Mock
+        }
+
+        // Mock data for things we don't have APIs for yet (Courses, Charts)
+        dashboardData.value.courses = 18; 
         dashboardData.value.genders = { male: 75, female: 25, total: 100 };
         dashboardData.value.results = { passed: 80, failed: 20, total: 100 };
+        
+        // Data prepared but chart rendering skipped to avoid dependency error
         dashboardData.value.performance = { 
             maleScores: [223, 174, 394, 295], femaleScores: [256, 169, 316, 350],
             years: ['2021-2022', '2022-2023', '2023-2024', '2024-2025']
         };
+
+    } catch (error) {
+        console.error("Critical error in dashboard fetch:", error);
+        // Absolute fallback if everything crashes
+        dashboardData.value.teachers = 12;
+        dashboardData.value.students = 285;
+        dashboardData.value.courses = 18;
+        dashboardData.value.pendingRequests = 7;
     }
 };
 

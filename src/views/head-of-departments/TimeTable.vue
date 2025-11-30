@@ -101,7 +101,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 // FIX 1: Import the API object directly (aliased for clarity)
-import TimeTableAPI from "@/stores/apis/TimeTableCRUD";
+import * as TimeTableAPI from "@/stores/apis/TimeTableCRUD";
 
 const { t, locale } = useI18n({ messages: { en: { department_timetable: 'Time Table' } } }); 
 const router = useRouter();

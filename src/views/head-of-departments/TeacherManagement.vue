@@ -135,7 +135,7 @@ const teacherKPIs = ref({
 
 const fetchData = async () => {
     try {
-        const response = await teacherStore.fetchDepartmentTeachers();
+        const response = await teacherStore.getAllTeachers();
         teacherList.value = response.list || response.data || [];
         teacherKPIs.value.totalFaculty = response.total || teacherList.value.length;
         
