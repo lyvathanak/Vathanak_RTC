@@ -43,7 +43,29 @@ export const useHODDataStore = defineStore('hodData', () => {
     try {
       const res = await api.get('/auth/get_detail_user');
       if (res.data?.user) {
-        authStore.user = res.data.user;
+        
+        // ---------------------------------------------------------
+        // 🛑 FIX: Prevent role from resetting to 'Student'
+        // We modify the user object slightly before updating authStore
+        // ---------------------------------------------------------
+        const fetchedUser = res.data.user;
+
+        // If 'role' is missing but 'roles' array exists (common API issue)
+        if (!fetchedUser.role && res.data.roles && res.data.roles.length > 0) {
+           // We assume HOD because this is the HOD store, but we can check the array
+           if (res.data.roles.includes('Head_Department')) {
+              fetchedUser.role = 'Head_Department';
+           } else {
+              fetchedUser.role = res.data.roles[0];
+           }
+        } 
+        // Fallback: If we are calling this, we are likely an HOD, enforce it if missing
+        else if (!fetchedUser.role) {
+           fetchedUser.role = 'Head_Department';
+        }
+
+        authStore.user = fetchedUser; // Now safe to assign
+        
         const user = res.data.user;
         return user.head_department?.id || user.user_detail?.department_id || user.department_id;
       }
@@ -121,6 +143,22 @@ export const useHODDataStore = defineStore('hodData', () => {
       if(res.success) students.value = res.data;
     }
   };
+  
+  const fetchLeaveRequests = async () => {
+    const id = await ensureDepartmentId();
+    if(id) {
+      const res = await HODDataService.getLeaveRequests(id);
+      if(res.success) leaveRequests.value = res.data;
+    }
+  };
+
+  const fetchTimeTable = async () => {
+    const id = await ensureDepartmentId();
+    if(id) {
+      const res = await HODDataService.getTimeTable(id);
+      if(res.success) timeSlots.value = res.data;
+    }
+  };
 
   return {
     students,
@@ -133,6 +171,8 @@ export const useHODDataStore = defineStore('hodData', () => {
     currentDepartment,
     loadDashboardData,
     fetchTeachers,
-    fetchStudents
+    fetchStudents,
+    fetchLeaveRequests,
+    fetchTimeTable
   };
 });
