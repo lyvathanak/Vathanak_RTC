@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-6"> 
-    
     <div class="px-6"> 
       
       <div class="mb-8 flex justify-between items-center">
@@ -22,7 +21,7 @@
           <div>
             <label class="text-sm font-medium text-gray-500">Role:</label>
             <p class="text-lg font-semibold text-purple-600 capitalize">
-              {{ (authStore.userRole || '').replace('_', ' ') }}
+              {{ (authStore.userRole || '').replace(/_/g, ' ') }}
             </p>
           </div>
           <div>
@@ -31,36 +30,24 @@
           </div>
           <div>
             <label class="text-sm font-medium text-gray-500">Department:</label>
-            <p class="text-lg">{{ authStore.user?.user_detail?.department || authStore.user?.profile?.department || 'N/A' }}</p>
+            <p class="text-lg font-bold text-blue-600">{{ hodStore.currentDepartment.name || 'N/A' }}</p>
           </div>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-gray-500">Department Teachers</p>
-              <p class="text-3xl font-bold text-blue-600">{{ dashboardData.teachers }}</p>
+              <p class="text-3xl font-bold text-blue-600" v-if="!hodStore.isLoading">
+                {{ hodStore.kpiStats.teachers || hodStore.teachers.length }}
+              </p>
+              <div v-else class="h-8 w-16 bg-gray-200 animate-pulse rounded"></div>
             </div>
             <div class="p-3 bg-blue-100 rounded-full">
-              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-500">Department Courses</p>
-              <p class="text-3xl font-bold text-green-600">{{ dashboardData.courses }}</p>
-            </div>
-            <div class="p-3 bg-green-100 rounded-full">
-              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </div>
           </div>
         </div>
@@ -69,13 +56,13 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-gray-500">Department Students</p>
-              <p class="text-3xl font-bold text-purple-600">{{ dashboardData.students }}</p>
+              <p class="text-3xl font-bold text-purple-600" v-if="!hodStore.isLoading">
+                {{ hodStore.kpiStats.students || hodStore.students.length }}
+              </p>
+              <div v-else class="h-8 w-16 bg-gray-200 animate-pulse rounded"></div>
             </div>
             <div class="p-3 bg-purple-100 rounded-full">
-              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
-              </svg>
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
             </div>
           </div>
         </div>
@@ -84,15 +71,32 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-gray-500">Pending Requests</p>
-              <p class="text-3xl font-bold text-orange-600">{{ dashboardData.pendingRequests }}</p>
+              <p class="text-3xl font-bold text-orange-600" v-if="!hodStore.isLoading">
+                {{ hodStore.kpiStats.leavePending }}
+              </p>
+              <div v-else class="h-8 w-16 bg-gray-200 animate-pulse rounded"></div>
             </div>
             <div class="p-3 bg-orange-100 rounded-full">
-              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-              </svg>
+              <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
             </div>
           </div>
         </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Active Time Slots</p>
+              <p class="text-3xl font-bold text-green-600" v-if="!hodStore.isLoading">
+                {{ hodStore.timeSlots.length }}
+              </p>
+              <div v-else class="h-8 w-16 bg-gray-200 animate-pulse rounded"></div>
+            </div>
+            <div class="p-3 bg-green-100 rounded-full">
+              <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -100,203 +104,62 @@
           Department Management
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button @click="router.push(`/${locale}/teacher-management`)" class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
+          <button @click="router.push(`/${locale}/hod/teacher-management`)" class="p-4 bg-blue-50 hover:bg-blue-100 rounded-lg text-left transition-colors">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-blue-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
               </div>
               <div>
                 <h3 class="font-semibold text-gray-900">Manage Teachers</h3>
-                <p class="text-sm text-gray-600">Assign and oversee department faculty</p>
+                <p class="text-sm text-gray-600">Assign and oversee faculty</p>
               </div>
             </div>
           </button>
 
-          <button class="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-green-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Course Approval</h3>
-                <p class="text-sm text-gray-600">Review and approve course proposals</p>
-              </div>
-            </div>
-          </button>
-
-          <button class="p-4 bg-purple-50 hover:bg-purple-100 rounded-lg text-left transition-colors">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-purple-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Department Reports</h3>
-                <p class="text-sm text-gray-600">View performance and analytics</p>
-              </div>
-            </div>
-          </button>
-
-          <button @click="router.push(`/${locale}/time-table`)" class="p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-left transition-colors">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-indigo-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Schedule Classes</h3>
-                <p class="text-sm text-gray-600">Manage department timetables</p>
-              </div>
-            </div>
-          </button>
-
-          <button class="p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg text-left transition-colors">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-yellow-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-gray-900">Budget Requests</h3>
-                <p class="text-sm text-gray-600">Submit and track department budgets</p>
-              </div>
-            </div>
-          </button>
-
-          <button @click="router.push(`/${locale}/leave-request`)" class="p-4 bg-red-50 hover:bg-red-100 rounded-lg text-left transition-colors">
+          <button @click="router.push(`/${locale}/hod/leave-request`)" class="p-4 bg-red-50 hover:bg-red-100 rounded-lg text-left transition-colors">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-red-500 text-white rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               </div>
               <div>
                 <h3 class="font-semibold text-gray-900">Approve Requests</h3>
-                <p class="text-sm text-gray-600">Review pending department requests</p>
+                <p class="text-sm text-gray-600">Review pending absences</p>
+              </div>
+            </div>
+          </button>
+
+          <button @click="router.push(`/${locale}/hod/time-table`)" class="p-4 bg-green-50 hover:bg-green-100 rounded-lg text-left transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-green-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900">Time Table</h3>
+                <p class="text-sm text-gray-600">Manage class schedules</p>
               </div>
             </div>
           </button>
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 :class="['text-xl font-semibold mb-4', locale === 'kh' ? 'khmer-text' : '']">
-          Head of Department Permissions
-        </h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <div 
-            v-for="permission in authStore.userPermissions" 
-            :key="permission"
-            class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium"
-          >
-            {{ permission.replace(/_/g, ' ').toUpperCase() }}
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from "vue-router";
+import { onMounted } from 'vue';
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/Authentication/authStore.js";
-import ChangeLanguage from "@/components/language/ChangLanguage.vue";
-
-// API Imports
-import StudentAPI from "@/stores/apis/StudentCRUD"; 
-import TeacherAPI from "@/stores/apis/TeacherCRUD";
-import LeaveRequestAPI from "@/stores/apis/LeaveRequestManagement";
-
-// REMOVED: import Chart from 'chart.js/auto'; (Causes resolve error due to missing dependency)
+import { useHODDataStore } from '@/stores/HeadOfDepartment/useHODDataStore';
 
 const router = useRouter();
-const route = useRoute();
-const { t, locale } = useI18n({ 
-    messages: { 
-        en: { hod_dashboard: 'HOD Dashboard', welcome: 'Welcome' }, 
-        kh: { hod_dashboard: 'ផ្ទាំងគ្រប់គ្រងប្រធានផ្នែក', welcome: 'សូមស្វាគមន៍' } 
-    } 
-});
+const { t, locale } = useI18n({ messages: { en: { hod_dashboard: 'HOD Dashboard', welcome: 'Welcome' }, kh: { hod_dashboard: 'ផ្ទាំងគ្រប់គ្រងប្រធានផ្នែក', welcome: 'សូមស្វាគមន៍' } } });
 const authStore = useAuthStore();
+const hodStore = useHODDataStore();
 
-const dashboardData = ref({
-    teachers: 0, 
-    students: 0, 
-    courses: 0, 
-    pendingRequests: 0,
-    genders: { male: 0, female: 0, total: 0 },
-    results: { passed: 0, failed: 0, total: 0 },
-    performance: { maleScores: [], femaleScores: [], years: [] }
+onMounted(() => {
+  // Use the master load function to update all KPIs
+  hodStore.loadDashboardData();
 });
-
-const fetchData = async () => {
-    try {
-        const userDept = authStore.user?.user_detail?.department || authStore.user?.profile?.department || '';
-        
-        // Fetch real data in parallel
-        const [teachersRes, studentsRes, leaveRes] = await Promise.allSettled([
-            TeacherAPI.getTeachersByDepartment(userDept),
-            StudentAPI.getStudentsByDepartment(userDept),
-            LeaveRequestAPI.getLeaveRequestsByStatus('pending')
-        ]);
-
-        // Process Teachers Data
-        if (teachersRes.status === 'fulfilled' && teachersRes.value.success) {
-             dashboardData.value.teachers = teachersRes.value.total || teachersRes.value.data?.length || 0;
-        } else {
-             console.warn("Using fallback/mock for teachers due to API error or permission issue.");
-             dashboardData.value.teachers = 12; // Mock
-        }
-
-        // Process Students Data
-        if (studentsRes.status === 'fulfilled' && studentsRes.value.success) {
-             dashboardData.value.students = studentsRes.value.total || studentsRes.value.data?.length || 0;
-        } else {
-             dashboardData.value.students = 285; // Mock
-        }
-
-        // Process Pending Requests
-        if (leaveRes.status === 'fulfilled' && leaveRes.value.success) {
-            dashboardData.value.pendingRequests = leaveRes.value.total_count || leaveRes.value.requests?.length || 0;
-        } else {
-            dashboardData.value.pendingRequests = 7; // Mock
-        }
-
-        // Mock data for things we don't have APIs for yet (Courses, Charts)
-        dashboardData.value.courses = 18; 
-        dashboardData.value.genders = { male: 75, female: 25, total: 100 };
-        dashboardData.value.results = { passed: 80, failed: 20, total: 100 };
-        
-        // Data prepared but chart rendering skipped to avoid dependency error
-        dashboardData.value.performance = { 
-            maleScores: [223, 174, 394, 295], femaleScores: [256, 169, 316, 350],
-            years: ['2021-2022', '2022-2023', '2023-2024', '2024-2025']
-        };
-
-    } catch (error) {
-        console.error("Critical error in dashboard fetch:", error);
-        // Absolute fallback if everything crashes
-        dashboardData.value.teachers = 12;
-        dashboardData.value.students = 285;
-        dashboardData.value.courses = 18;
-        dashboardData.value.pendingRequests = 7;
-    }
-};
-
-onMounted(fetchData);
-
-const handleLogout = () => {
-  authStore.logout();
-  const currentLang = route.params.lang || 'en';
-  router.push(`/${currentLang}/login`);
-};
 </script>

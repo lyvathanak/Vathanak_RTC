@@ -20,8 +20,7 @@ const sidebarOpen = ref(true)
 
 // Check screen size and update sidebar behavior
 const checkScreenSize = () => {
-  isMobile.value = window.innerWidth < 768 // md breakpoint
-  // On mobile, start with collapsed sidebar, on desktop start expanded
+  isMobile.value = window.innerWidth < 768
   sidebarOpen.value = !isMobile.value
 }
 
@@ -48,17 +47,16 @@ onUnmounted(() => {
             class="h-full flex-shrink-0" 
             :collapsible="isMobile ? 'offcanvas' : 'icon'"
           />
-          <SidebarInset class="flex-1 min-w-0">
-            <div class="sticky top-0 z-40 bg-[#235AA6]"> 
+          <SidebarInset class="flex-1 min-w-0 flex flex-col bg-gray-50">
+            <div class="sticky top-0 z-40 bg-[#235AA6] shadow-sm"> 
               <HeaderControl class="h-auto flex w-full" />
             </div>
-            <main class="h-full">
+            <main class="flex-1 overflow-auto h-full p-4">
               <router-view />
             </main>
           </SidebarInset>
         </div>
       </SidebarProvider>
     </div>
-
-    </div>
+  </div>
 </template>
